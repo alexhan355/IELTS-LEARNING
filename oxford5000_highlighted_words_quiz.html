@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Oxford 5000 (B2) – Flashcards & Quiz</title>
+  <style>
+    :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans",sans-serif;line-height:1.25}
+    body{margin:0;background:#f6f7fb;color:#111}
+    header{padding:16px 18px;background:#111;color:#fff}
+    header h1{margin:0;font-size:18px;font-weight:700}
+    header p{margin:6px 0 0;font-size:13px;opacity:.85}
+    main{max-width:980px;margin:0 auto;padding:16px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .tab{border:1px solid #ddd;background:#fff;padding:8px 10px;border-radius:10px;cursor:pointer;font-weight:600;font-size:13px}
+    .tab.active{background:#111;color:#fff;border-color:#111}
+    .panel{display:none}
+    .panel.active{display:block}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .card{background:#fff;border:1px solid #e6e6e6;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,.05);padding:18px;min-height:170px}
+    .big{font-size:34px;font-weight:800;letter-spacing:.2px}
+    .hint{margin-top:10px;font-size:14px;color:#444}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    button{border:1px solid #ddd;background:#fff;padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:700;font-size:13px}
+    button.primary{background:#111;color:#fff;border-color:#111}
+    button.good{border-color:#0a7}
+    button.bad{border-color:#d33}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .stat{font-size:13px;color:#333;background:#fff;border:1px solid #e6e6e6;border-radius:12px;padding:10px 12px}
+    input[type="search"]{padding:10px 12px;border-radius:12px;border:1px solid #ddd;background:#fff;min-width:240px;font-size:14px}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    th,td{font-size:13px;text-align:left;padding:10px 12px}
+    thead th{color:#555;font-weight:800}
+    tbody tr{background:#fff;border:1px solid #e6e6e6}
+    tbody tr td:first-child{border-top-left-radius:12px;border-bottom-left-radius:12px}
+    tbody tr td:last-child{border-top-right-radius:12px;border-bottom-right-radius:12px}
+    .pill{display:inline-block;font-size:12px;padding:4px 8px;border-radius:999px;background:#f1f2f6;border:1px solid #e6e6e6;color:#333}
+    .right{color:#0a7;font-weight:800}
+    .wrong{color:#d33;font-weight:800}
+    .muted{opacity:.7}
+    .small{font-size:12px;color:#555}
+    .two-col{display:grid;grid-template-columns:1.2fr .8fr;gap:12px}
+    @media(max-width:760px){.two-col{grid-template-columns:1fr}}
+    .choice{display:block;width:100%;text-align:left;margin:8px 0}
+    .choice.correct{border-color:#0a7}
+    .choice.incorrect{border-color:#d33}
+    .footer-note{margin-top:10px;font-size:12px;color:#666}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Oxford 5000 (B2) – Flashcards & Quiz</h1>
+  <p>Offline self-study • Flashcards + 4-choice quiz • Track known/unknown • Practise mistakes only</p>
+</header>
+
+<main>
+  <div class="tabs">
+    <div class="tab active" data-tab="flash">Flashcards</div>
+    <div class="tab" data-tab="quiz">Quiz</div>
+    <div class="tab" data-tab="list">Word List</div>
+    <div class="tab" data-tab="stats">Stats</div>
+  </div>
+
+  <section class="panel active" id="flash">
+    <div class="two-col">
+      <div class="card" id="flashCard">
+        <div class="big" id="flashWord">—</div>
+        <div class="hint muted" id="flashPrompt">Click Reveal to see the meaning.</div>
+        <div class="hint" id="flashMeaning" style="display:none;"></div>
+
+        <div class="controls">
+          <button id="btnReveal" class="primary">Reveal</button>
+          <button id="btnPrev">Prev</button>
+          <button id="btnNext">Next</button>
+          <button id="btnShuffle">Shuffle</button>
+        </div>
+        <div class="controls">
+          <button id="btnKnow" class="good">I know it</button>
+          <button id="btnDont" class="bad">I don’t know</button>
+          <button id="btnMistakes">Practise unknown only</button>
+          <button id="btnAll">Practise all</button>
+        </div>
+        <div class="footer-note">Tip: mark I don’t know, then use Practise unknown only.</div>
+      </div>
+
+      <div>
+        <div class="stat" style="margin-bottom:12px;">
+          <div><b>Deck:</b> <span id="deckName">All words</span></div>
+          <div class="small">Progress is saved in your browser (localStorage).</div>
+        </div>
+        <div class="stat">
+          <div><b>Now:</b> <span id="flashIndex">0</span> / <span id="flashTotal">0</span></div>
+          <div><b>Known:</b> <span id="knownCount">0</span> <span class="muted">|</span>
+              <b>Unknown:</b> <span id="unknownCount">0</span></div>
+          <div><b>Quiz accuracy:</b> <span id="quizAcc">0%</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="quiz">
+    <div class="card">
+      <div class="small muted">Choose the correct word for the definition</div>
+      <div class="big" style="font-size:22px;margin-top:8px;" id="quizDef">—</div>
+      <div id="choices"></div>
+      <div class="controls">
+        <button id="btnNextQ" class="primary">Next question</button>
+        <button id="btnRetryWrong">Practise wrong answers only</button>
+        <button id="btnQuizAll">Use all words</button>
+        <button id="btnQuizUnknown">Use unknown only</button>
+      </div>
+      <div class="stat" style="margin-top:12px;">
+        <b>Quiz:</b> <span id="quizScore">0 correct / 0 total</span>
+        <span class="muted"> • </span>
+        <b>Wrong pool:</b> <span id="wrongPool">0</span>
+      </div>
+      <div class="footer-note">Meanings are short learner-friendly English definitions (offline). Want Chinese meanings too? Tell me and I’ll regenerate.</div>
+    </div>
+  </section>
+
+  <section class="panel" id="list">
+    <div class="row" style="margin-bottom:10px;">
+      <input type="search" id="search" placeholder="Search a word (e.g., conspiracy)"/>
+      <button id="btnResetProgress">Reset progress</button>
+      <span class="pill">Click a word to jump in Flashcards</span>
+    </div>
+    <table>
+      <thead>
+        <tr><th style="width:28%;">Word</th><th>Meaning</th><th style="width:20%;">Status</th></tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </section>
+
+  <section class="panel" id="stats">
+    <div class="card">
+      <div class="row">
+        <div class="stat"><b>Total words:</b> <span id="stTotal">0</span></div>
+        <div class="stat"><b>Known:</b> <span id="stKnown">0</span></div>
+        <div class="stat"><b>Unknown:</b> <span id="stUnknown">0</span></div>
+        <div class="stat"><b>Quiz:</b> <span id="stQuiz">0/0</span></div>
+      </div>
+      <div class="footer-note">Reset anytime from the Word List tab.</div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const WORDS = [
+    {w:"absorb", d:"take in (a liquid, information, or ideas)"},
+    {w:"accent", d:"a way of pronouncing words; stress on a syllable"},
+    {w:"accomplish", d:"successfully complete something"},
+    {w:"accountant", d:"a person who keeps or checks financial records"},
+    {w:"accuracy", d:"the quality of being correct and precise"},
+    {w:"accurately", d:"in a correct and exact way"},
+    {w:"acid", d:"a chemical that can burn; a sour substance"},
+    {w:"activate", d:"make something start working"},
+    {w:"addiction", d:"a strong dependence that is hard to stop"},
+    {w:"adequate", d:"enough; good enough for a purpose"},
+    {w:"AIDS", d:"a serious disease that damages the immune system"},
+    {w:"alongside", d:"next to; together with"},
+    {w:"altogether", d:"completely; in total"},
+    {w:"arrow", d:"a sign/shape showing direction; a pointed weapon"},
+    {w:"asset", d:"a valuable thing or useful quality"},
+    {w:"assign", d:"give someone a task or job"},
+    {w:"assure", d:"tell someone confidently; make certain"},
+    {w:"astonishing", d:"very surprising"},
+    {w:"attachment", d:"something added (e.g., email file); a feeling of affection"},
+    {w:"auction", d:"a public sale where the highest bidder buys"},
+    {w:"audio", d:"sound, especially recorded"},
+    {w:"awkward", d:"uncomfortable; difficult to handle"},
+    {w:"badge", d:"a small item worn to show identity/achievement"},
+    {w:"ballet", d:"a type of formal dance"},
+    {w:"bias", d:"an unfair preference for or against something"},
+    {w:"bid", d:"offer a price in an auction; attempt to do something"},
+    {w:"bold", d:"brave; confident; not afraid"},
+    {w:"bombing", d:"an attack using bombs"},
+    {w:"boost", d:"increase or improve something"},
+    {w:"bound", d:"certain to happen; tied/limited"},
+    {w:"brick", d:"a hard block used for building"},
+    {w:"broadly", d:"in general terms; widely"},
+    {w:"cabin", d:"a small simple house; a room on a ship/plane"},
+    {w:"canal", d:"a man-made waterway"},
+    {w:"casual", d:"relaxed; not formal"},
+    {w:"certificate", d:"an official document proving something"},
+    {w:"chase", d:"run after to catch"},
+    {w:"cheek", d:"the side of your face below your eye"},
+    {w:"choir", d:"a group of people who sing together"},
+    {w:"circuit", d:"a closed path for electricity; a route"},
+    {w:"civilization", d:"a society with developed culture and systems"},
+    {w:"clerk", d:"a person who works in an office or shop"},
+    {w:"clip", d:"a small device to hold things together; fasten"},
+    {w:"colony", d:"an area controlled by another country; a group of organisms"},
+    {w:"compose", d:"create (music/writing); make up"},
+    {w:"compound", d:"made of two or more parts; a mixture"},
+    {w:"comprise", d:"consist of; be made up of"},
+    {w:"compulsory", d:"required by rules or law"},
+    {w:"consistently", d:"in the same way over time; regularly"},
+    {w:"conspiracy", d:"a secret plan by a group to do something illegal"},
+    {w:"consult", d:"ask for advice from; meet professionally"},
+    {w:"consumption", d:"the act of using or eating/drinking"},
+    {w:"controversial", d:"causing public disagreement"},
+    {w:"cope", d:"manage a difficult situation"},
+    {w:"operation", d:"an activity/process; medical surgery"},
+    {w:"corridor", d:"a long passage in a building"},
+    {w:"coverage", d:"reporting in media; the area reached"},
+    {w:"crack", d:"a narrow break/line; break slightly"},
+    {w:"craft", d:"a skill in making things by hand"},
+    {w:"dairy", d:"milk products; relating to milk"},
+    {w:"deposit", d:"put money into an account; an initial payment"},
+    {w:"depression", d:"a long period of low mood; an economic decline"},
+    {w:"destruction", d:"the act of destroying"},
+    {w:"discourage", d:"make someone less confident or willing"},
+    {w:"disturb", d:"interrupt; make someone worried"},
+    {w:"dominant", d:"most powerful or important"},
+    {w:"dot", d:"a small round mark"},
+    {w:"downtown", d:"the central business area of a city"},
+    {w:"dynamic", d:"active and changing; full of energy"},
+    {w:"elementary", d:"basic; simple; for young learners"},
+    {w:"eliminate", d:"remove completely"},
+    {w:"entrepreneur", d:"a person who starts and runs a business"},
+    {w:"evolution", d:"gradual development over time"},
+    {w:"excessive", d:"too much"},
+    {w:"fraction", d:"a small part; a number like 1/3"},
+    {w:"fraud", d:"the crime of tricking people to get money"},
+    {w:"furious", d:"extremely angry"},
+    {w:"gay", d:"homosexual; also ‘cheerful’ (older use)"},
+    {w:"genuine", d:"real; not fake"},
+    {w:"gorgeous", d:"very beautiful"},
+    {w:"governor", d:"a leader of a region; manager of an institution"},
+    {w:"grocery", d:"food and household supplies"},
+    {w:"helmet", d:"a hard hat for protection"},
+    {w:"herb", d:"a plant used in cooking or medicine"},
+    {w:"hip", d:"the side of the body below the waist"},
+    {w:"hook", d:"a curved piece used for hanging/catching"},
+    {w:"hypothesis", d:"a suggested explanation to be tested"},
+    {w:"icon", d:"a famous symbol/person; a small computer symbol"},
+    {w:"identical", d:"exactly the same"},
+    {w:"illusion", d:"a false idea; something that seems real but isn’t"},
+    {w:"immigration", d:"coming to live in another country"},
+    {w:"immune", d:"protected against a disease"},
+    {w:"index", d:"a list showing where information is; an indicator"},
+    {w:"info", d:"information (informal)"},
+    {w:"ink", d:"coloured liquid used for writing/printing"},
+    {w:"instant", d:"happening immediately; a very short time"},
+    {w:"interval", d:"a period between events"},
+    {w:"invade", d:"enter a place by force"},
+    {w:"invest", d:"put money/time into something for profit/benefit"},
+    {w:"jail", d:"prison; keep someone in prison"},
+    {w:"joint", d:"shared; a place where bones meet"},
+    {w:"kit", d:"a set of tools/equipment"},
+    {w:"ladder", d:"a frame for climbing up/down"},
+    {w:"leaflet", d:"a small printed sheet for information"},
+    {w:"lens", d:"a piece of glass that focuses light"},
+    {w:"lighting", d:"the arrangement/provision of light"},
+    {w:"likewise", d:"in the same way; also"},
+    {w:"litter", d:"rubbish left in public places; animals in one birth"},
+    {w:"lottery", d:"a game where prizes are won by chance"},
+    {w:"loyal", d:"faithful and supportive"},
+    {w:"lyric", d:"the words of a song"},
+    {w:"margin", d:"the edge of a page; extra space; difference"},
+    {w:"martial", d:"connected with war or the military"},
+    {w:"mayor", d:"the elected leader of a city/town"},
+    {w:"medal", d:"a metal disc given as an award"},
+    {w:"mechanic", d:"a person who repairs machines/vehicles"},
+    {w:"mechanism", d:"a system of parts working together; a process"},
+    {w:"metaphor", d:"a figure of speech comparing two things"},
+    {w:"miner", d:"a person who works in a mine"},
+    {w:"miserable", d:"very unhappy; extremely uncomfortable"},
+    {w:"mode", d:"a way of doing something; a setting"},
+    {w:"modest", d:"not proud; not too large/expensive"},
+    {w:"monument", d:"a statue/building to remember a person/event"},
+    {w:"mortgage", d:"a loan to buy property"},
+    {w:"mosque", d:"a Muslim place of worship"},
+    {w:"motion", d:"movement; a formal proposal"},
+    {w:"naked", d:"not wearing clothes"},
+    {w:"nasty", d:"unpleasant; bad; unkind"},
+    {w:"navigation", d:"finding the way; planning a route"},
+    {w:"neutral", d:"not supporting either side; not strong in colour"},
+    {w:"norm", d:"a standard or typical pattern"},
+    {w:"nowadays", d:"these days"},
+    {w:"outfit", d:"a set of clothes worn together"},
+    {w:"outstanding", d:"excellent; very good"}
+  ];
+
+  const LS_KNOWN="ox5k_known_v1", LS_UNKNOWN="ox5k_unknown_v1", LS_QRIGHT="ox5k_qright_v1",
+        LS_QTOTAL="ox5k_qtotal_v1", LS_WRONGPOOL="ox5k_wrongpool_v1";
+
+  const known=new Set(JSON.parse(localStorage.getItem(LS_KNOWN)||"[]"));
+  const unknown=new Set(JSON.parse(localStorage.getItem(LS_UNKNOWN)||"[]"));
+  let qRight=Number(localStorage.getItem(LS_QRIGHT)||"0");
+  let qTotal=Number(localStorage.getItem(LS_QTOTAL)||"0");
+  let wrongPool=new Set(JSON.parse(localStorage.getItem(LS_WRONGPOOL)||"[]"));
+
+  let deck=[...WORDS], idx=0, revealed=false;
+
+  const $=id=>document.getElementById(id);
+
+  function save(){
+    localStorage.setItem(LS_KNOWN, JSON.stringify([...known]));
+    localStorage.setItem(LS_UNKNOWN, JSON.stringify([...unknown]));
+    localStorage.setItem(LS_QRIGHT, String(qRight));
+    localStorage.setItem(LS_QTOTAL, String(qTotal));
+    localStorage.setItem(LS_WRONGPOOL, JSON.stringify([...wrongPool]));
+  }
+  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+  function current(){return deck[idx];}
+
+  function renderStats(){
+    $("flashTotal").textContent=deck.length;
+    $("flashIndex").textContent=deck.length?(idx+1):0;
+    $("knownCount").textContent=known.size;
+    $("unknownCount").textContent=unknown.size;
+    $("quizScore").textContent=`${qRight} correct / ${qTotal} total`;
+    $("wrongPool").textContent=wrongPool.size;
+    const acc=qTotal?Math.round((qRight/qTotal)*100):0;
+    $("quizAcc").textContent=`${acc}%`;
+    $("stTotal").textContent=WORDS.length;
+    $("stKnown").textContent=known.size;
+    $("stUnknown").textContent=unknown.size;
+    $("stQuiz").textContent=`${qRight}/${qTotal}`;
+  }
+
+  function renderFlash(){
+    const it=current();
+    $("flashWord").textContent=it?it.w:"—";
+    $("flashMeaning").textContent=it?it.d:"";
+    $("flashMeaning").style.display=revealed?"block":"none";
+    $("flashPrompt").style.display=revealed?"none":"block";
+    $("btnPrev").disabled=(idx<=0);
+    $("btnNext").disabled=(idx>=deck.length-1);
+    renderStats(); save();
+  }
+
+  function setDeckAll(){
+    deck=[...WORDS]; idx=0; revealed=false;
+    $("deckName").textContent="All words";
+    renderFlash();
+  }
+  function setDeckUnknownOnly(){
+    const u=WORDS.filter(x=>unknown.has(x.w));
+    deck=u.length?u:[...WORDS];
+    idx=0; revealed=false;
+    $("deckName").textContent=u.length?"Unknown only":"All words (no unknown yet)";
+    renderFlash();
+  }
+
+  function markKnown(){
+    const it=current(); if(!it) return;
+    known.add(it.w); unknown.delete(it.w);
+    renderList($("search").value); renderFlash();
+  }
+  function markUnknown(){
+    const it=current(); if(!it) return;
+    unknown.add(it.w); known.delete(it.w);
+    renderList($("search").value); renderFlash();
+  }
+
+  // tabs
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.addEventListener("click", ()=>{
+      document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+      t.classList.add("active");
+      $(t.dataset.tab).classList.add("active");
+      renderStats();
+    });
+  });
+
+  // flash controls
+  $("btnReveal").addEventListener("click", ()=>{revealed=!revealed; renderFlash();});
+  $("btnPrev").addEventListener("click", ()=>{if(idx>0){idx--; revealed=false; renderFlash();}});
+  $("btnNext").addEventListener("click", ()=>{if(idx<deck.length-1){idx++; revealed=false; renderFlash();}});
+  $("btnShuffle").addEventListener("click", ()=>{shuffle(deck); idx=0; revealed=false; renderFlash();});
+  $("btnKnow").addEventListener("click", markKnown);
+  $("btnDont").addEventListener("click", markUnknown);
+  $("btnMistakes").addEventListener("click", setDeckUnknownOnly);
+  $("btnAll").addEventListener("click", setDeckAll);
+
+  // list
+  function statusLabel(w){
+    if(known.has(w)) return `<span class="right">Known</span>`;
+    if(unknown.has(w)) return `<span class="wrong">Unknown</span>`;
+    return `<span class="muted">Unmarked</span>`;
+  }
+  function renderList(filter=""){
+    const q=filter.trim().toLowerCase();
+    const rows=WORDS.filter(x=>!q || x.w.toLowerCase().includes(q)).map(x=>`
+      <tr data-word="${x.w}">
+        <td><b>${x.w}</b></td>
+        <td>${x.d}</td>
+        <td>${statusLabel(x.w)}</td>
+      </tr>
+    `).join("");
+    $("tbody").innerHTML = rows || `<tr><td colspan="3" class="muted">No matches.</td></tr>`;
+    document.querySelectorAll("#tbody tr[data-word]").forEach(tr=>{
+      tr.addEventListener("click", ()=>{
+        const w=tr.getAttribute("data-word");
+        const pos=deck.findIndex(x=>x.w===w);
+        if(pos>=0){idx=pos;}
+        else{ deck=[...WORDS]; $("deckName").textContent="All words"; idx=deck.findIndex(x=>x.w===w); }
+        revealed=false;
+        document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+        document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+        document.querySelector('.tab[data-tab="flash"]').classList.add("active");
+        $("flash").classList.add("active");
+        renderFlash();
+      });
+    });
+  }
+  $("search").addEventListener("input", e=>renderList(e.target.value));
+  $("btnResetProgress").addEventListener("click", ()=>{
+    if(!confirm("Reset all progress (known/unknown + quiz stats)?")) return;
+    known.clear(); unknown.clear(); wrongPool.clear();
+    qRight=0; qTotal=0;
+    save();
+    setDeckAll();
+    renderList($("search").value);
+    renderStats();
+  });
+
+  // quiz
+  let quizDeck=[...WORDS];
+  let useWrongOnly=false;
+  let quizAnswered=false;
+  let currentQ=null;
+
+  function pick4(correct){
+    const pool=WORDS.filter(x=>x.w!==correct.w);
+    shuffle(pool);
+    const opts=[correct, pool[0], pool[1], pool[2]];
+    shuffle(opts);
+    return opts;
+  }
+  function setQuizDeck(mode){
+    if(mode==="unknown"){
+      const u=WORDS.filter(x=>unknown.has(x.w));
+      quizDeck=u.length?u:[...WORDS];
+    } else if(mode==="wrong"){
+      const w=WORDS.filter(x=>wrongPool.has(x.w));
+      quizDeck=w.length?w:[...WORDS];
+    } else {
+      quizDeck=[...WORDS];
+    }
+  }
+  function newQuestion(){
+    quizAnswered=false;
+    const base = useWrongOnly ? WORDS.filter(x=>wrongPool.has(x.w)) : quizDeck;
+    const source = base.length ? base : [...WORDS];
+    const correct = source[Math.floor(Math.random()*source.length)];
+    currentQ = {correct, options: pick4(correct)};
+    $("quizDef").textContent=correct.d;
+    $("choices").innerHTML=currentQ.options.map(o=>`<button class="choice" data-w="${o.w}">${o.w}</button>`).join("");
+    document.querySelectorAll(".choice").forEach(btn=>{
+      btn.addEventListener("click", ()=>answer(btn.getAttribute("data-w"), btn));
+    });
+    renderStats();
+  }
+  function answer(sel, btn){
+    if(quizAnswered) return;
+    quizAnswered=true;
+    qTotal+=1;
+    const correct=currentQ.correct.w;
+    document.querySelectorAll(".choice").forEach(b=>{
+      if(b.getAttribute("data-w")===correct) b.classList.add("correct");
+    });
+    if(sel===correct){
+      qRight+=1; wrongPool.delete(correct);
+    } else {
+      btn.classList.add("incorrect"); wrongPool.add(correct);
+    }
+    save(); renderStats();
+  }
+  $("btnNextQ").addEventListener("click", newQuestion);
+  $("btnRetryWrong").addEventListener("click", ()=>{useWrongOnly=true; setQuizDeck("wrong"); newQuestion();});
+  $("btnQuizAll").addEventListener("click", ()=>{useWrongOnly=false; setQuizDeck("all"); newQuestion();});
+  $("btnQuizUnknown").addEventListener("click", ()=>{useWrongOnly=false; setQuizDeck("unknown"); newQuestion();});
+
+  // init
+  setDeckAll();
+  renderList("");
+  setQuizDeck("all");
+  newQuestion();
+  renderStats();
+</script>
+</body>
+</html>
