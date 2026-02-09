@@ -1,12 +1,63 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Alex IELTS – Online Practice</title>
+  <style>
+    :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans",sans-serif;line-height:1.35}
+    body{margin:0;background:#f6f7fb;color:#111}
+    header{padding:18px 18px;background:#111;color:#fff}
+    header h1{margin:0;font-size:20px;font-weight:800}
+    header p{margin:6px 0 0;font-size:13px;opacity:.85}
+    main{max-width:980px;margin:0 auto;padding:16px}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    @media(max-width:760px){.grid{grid-template-columns:1fr}}
+    .card{background:#fff;border:1px solid #e6e6e6;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,.05);padding:16px}
+    .card h2{margin:0 0 8px;font-size:16px}
+    .card p{margin:0 0 12px;color:#444;font-size:13px}
+    a.btn{display:inline-block;text-decoration:none;border:1px solid #111;background:#111;color:#fff;
+      padding:10px 12px;border-radius:12px;font-weight:800;font-size:13px}
+    .muted{color:#666;font-size:12px;margin-top:10px}
+    .section-title{margin:12px 0 10px;font-size:12px;color:#666;text-transform:uppercase;letter-spacing:.12em}
+    ul{margin:0;padding-left:18px}
+    li{margin:6px 0}
+    code{background:#eef0f6;border:1px solid #e6e6e6;border-radius:8px;padding:2px 6px}
+  </style>
 </head>
-<body style="font-family:Arial; padding:20px;">
+<body>
+<header>
   <h1>Alex IELTS – Online Practice</h1>
-  <p><a href="./vocab/oxford5000-b2-flashcards.html">Oxford 5000 (B2) – Flashcards & Quiz</a></p>
+  <p>Open on phone or laptop • Works offline after first load • Progress saved in browser</p>
+</header>
+
+<main>
+  <div class="section-title">Vocabulary</div>
+  <div class="grid">
+    <div class="card">
+      <h2>Oxford 5000 (B2) – Flashcards & Quiz</h2>
+      <p>Flashcards + 4-choice quiz • Track known/unknown • Practise mistakes only</p>
+      <a class="btn" href="./vocab/oxford5000-b2-flashcards.html">Start</a>
+      <div class="muted">File: <code>vocab/oxford5000-b2-flashcards.html</code></div>
+    </div>
+
+    <div class="card">
+      <h2>Coming next</h2>
+      <p>Speaking Part 1 / Part 2 builder / Task 1 trend language drills…</p>
+      <span class="muted">Tell me what you want to add and I’ll generate the next HTML pages.</span>
+    </div>
+  </div>
+
+  <div class="section-title">How to use</div>
+  <div class="card">
+    <ul>
+      <li>Share this link to students: the page they open will be <b>index.html</b>.</li>
+      <li>To add new materials, upload a new HTML into the right folder, then add one card here.</li>
+      <li>Tip: keep filenames stable so student links never change.</li>
+    </ul>
+  </div>
+
+  <p class="muted" style="margin-top:12px;">© Alex IELTS – Personal teaching materials</p>
+</main>
 </body>
 </html>
