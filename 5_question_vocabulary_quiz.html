@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5-Question Vocabulary Quiz</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f7fb;
+      color: #222;
+      margin: 0;
+      padding: 24px;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 32px;
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 30px;
+      color: #1f3c88;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 24px;
+    }
+    .question {
+      padding: 18px 20px;
+      border: 1px solid #e6eaf2;
+      border-radius: 12px;
+      margin-bottom: 18px;
+      background: #fbfcff;
+    }
+    .question-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+    label {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    label:hover {
+      background: #eef4ff;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #1f3c88;
+      color: #fff;
+    }
+    button.secondary {
+      background: #6b7280;
+    }
+    .result {
+      margin-top: 24px;
+      padding: 18px;
+      border-radius: 12px;
+      background: #eef7ee;
+      border: 1px solid #cfe8cf;
+      display: none;
+      line-height: 1.8;
+    }
+    .feedback {
+      margin-top: 10px;
+      font-size: 15px;
+    }
+    .correct {
+      color: #1f7a1f;
+      font-weight: 700;
+    }
+    .incorrect {
+      color: #b42318;
+      font-weight: 700;
+    }
+    .footer {
+      margin-top: 28px;
+      color: #888;
+      font-size: 14px;
+      text-align: centre;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 14px;
+      }
+      .container {
+        padding: 18px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      .question-title {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Vocabulary Multiple-Choice Quiz</h1>
+    <div class="subtitle">Choose the best answer for each question. There are 5 questions in total.</div>
+
+    <form id="quizForm">
+      <div class="question">
+        <div class="question-title">1. The word enhance is closest in meaning to</div>
+        <label><input type="radio" name="q1" value="A"> A. improve</label>
+        <label><input type="radio" name="q1" value="B"> B. reduce</label>
+        <label><input type="radio" name="q1" value="C"> C. ignore</label>
+        <label><input type="radio" name="q1" value="D"> D. delay</label>
+      </div>
+
+      <div class="question">
+        <div class="question-title">2. If a student is reluctant to speak in class, he is probably</div>
+        <label><input type="radio" name="q2" value="A"> A. eager</label>
+        <label><input type="radio" name="q2" value="B"> B. unwilling</label>
+        <label><input type="radio" name="q2" value="C"> C. confident</label>
+        <label><input type="radio" name="q2" value="D"> D. organised</label>
+      </div>
+
+      <div class="question">
+        <div class="question-title">3. The company decided to launch a new product next month. The word launch here means</div>
+        <label><input type="radio" name="q3" value="A"> A. begin selling</label>
+        <label><input type="radio" name="q3" value="B"> B. hide completely</label>
+        <label><input type="radio" name="q3" value="C"> C. borrow money</label>
+        <label><input type="radio" name="q3" value="D"> D. repair slowly</label>
+      </div>
+
+      <div class="question">
+        <div class="question-title">4. The word significant in academic writing usually means</div>
+        <label><input type="radio" name="q4" value="A"> A. funny</label>
+        <label><input type="radio" name="q4" value="B"> B. expensive</label>
+        <label><input type="radio" name="q4" value="C"> C. important</label>
+        <label><input type="radio" name="q4" value="D"> D. traditional</label>
+      </div>
+
+      <div class="question">
+        <div class="question-title">5. If two ideas are contradictory, they</div>
+        <label><input type="radio" name="q5" value="A"> A. support each other</label>
+        <label><input type="radio" name="q5" value="B"> B. are exactly the same</label>
+        <label><input type="radio" name="q5" value="C"> C. cannot both be true</label>
+        <label><input type="radio" name="q5" value="D"> D. are easy to remember</label>
+      </div>
+
+      <div class="actions">
+        <button type="button" onclick="checkAnswers()">Submit</button>
+        <button type="button" class="secondary" onclick="resetQuiz()">Reset</button>
+      </div>
+    </form>
+
+    <div id="result" class="result"></div>
+
+    <div class="footer">Created for vocabulary practice</div>
+  </div>
+
+  <script>
+    const answers = {
+      q1: "A",
+      q2: "B",
+      q3: "A",
+      q4: "C",
+      q5: "C"
+    };
+
+    const explanations = {
+      q1: "enhance = improve or make better",
+      q2: "reluctant = unwilling or not ready to do something",
+      q3: "launch a product = begin selling or introducing it",
+      q4: "significant = important or noticeable",
+      q5: "contradictory ideas cannot both be true at the same time"
+    };
+
+    function checkAnswers() {
+      let score = 0;
+      let output = "<strong>Your score: </strong>";
+      let details = "";
+
+      for (let key in answers) {
+        const selected = document.querySelector(`input[name="${key}"]:checked`);
+        if (selected) {
+          if (selected.value === answers[key]) {
+            score++;
+            details += `<div class="feedback correct">${key.toUpperCase()}: Correct. ${explanations[key]}</div>`;
+          } else {
+            details += `<div class="feedback incorrect">${key.toUpperCase()}: Incorrect. Correct answer: ${answers[key]}. ${explanations[key]}</div>`;
+          }
+        } else {
+          details += `<div class="feedback incorrect">${key.toUpperCase()}: No answer selected. Correct answer: ${answers[key]}. ${explanations[key]}</div>`;
+        }
+      }
+
+      output += `${score} / 5`;
+      const resultBox = document.getElementById("result");
+      resultBox.innerHTML = output + details;
+      resultBox.style.display = "block";
+      window.scrollTo({ top: document.body.scrollHeight, behaviour: "smooth" });
+    }
+
+    function resetQuiz() {
+      document.getElementById("quizForm").reset();
+      const resultBox = document.getElementById("result");
+      resultBox.style.display = "none";
+      resultBox.innerHTML = "";
+    }
+  </script>
+</body>
+</html>
