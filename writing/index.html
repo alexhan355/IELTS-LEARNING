@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="IELTS Writing Task 2 互动逻辑链训练：31个高频主题，310句观点素材。">
+<title>IELTS Writing 急救包｜310句互动逻辑链训练</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html" aria-label="Back to Alex IELTS home">
+    <span class="brand-mark">A</span><span><strong>Alex IELTS</strong><small>Writing Lab</small></span>
+  </a>
+  <div class="top-actions">
+    <button id="focusBtn" class="ghost">专注模式</button>
+    <button id="resetBtn" class="ghost danger">重置进度</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">IELTS WRITING TASK 2 · BAND 7–8.5</span>
+    <h1>310句观点素材<br><span>互动逻辑链训练</span></h1>
+    <p>31个高频主题 × 每主题10句。不是背范文，而是练会“观点如何展开、句子为什么接得上”。</p>
+    <div class="hero-stats">
+      <div><b>31</b><span>高频主题</span></div>
+      <div><b>310</b><span>核心句</span></div>
+      <div><b>5</b><span>训练模式</span></div>
+    </div>
+  </div>
+  <div class="progress-card">
+    <div class="ring" id="progressRing"><span id="progressPercent">0%</span></div>
+    <div><strong>你的训练进度</strong><p id="progressText">还没有开始。先挑一个主题。</p></div>
+  </div>
+</section>
+
+<nav class="mode-tabs" aria-label="训练模式">
+  <button class="tab active" data-mode="learn">① 学习</button>
+  <button class="tab" data-mode="label">② 标签判断</button>
+  <button class="tab" data-mode="order">③ 逻辑排序</button>
+  <button class="tab" data-mode="cloze">④ 挖空复现</button>
+  <button class="tab" data-mode="write">⑤ 独立串写</button>
+</nav>
+
+<main class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <div><span class="kicker">TOPICS</span><h2>选择主题</h2></div>
+      <button id="randomTopic" class="icon-btn" title="随机主题">↻</button>
+    </div>
+    <div class="search-wrap"><input id="topicSearch" type="search" placeholder="搜索 AI / crime / 体育…"></div>
+    <div id="topicList" class="topic-list"></div>
+  </aside>
+
+  <section class="workspace">
+    <div class="workspace-head">
+      <div>
+        <span id="topicNumber" class="kicker">TOPIC 01</span>
+        <h2 id="topicTitle">Schools should spend more time on physical education</h2>
+        <p id="topicZh">学校应增加体育课</p>
+      </div>
+      <div class="mini-progress"><span id="topicDone">0/5</span><small>本主题模式完成</small></div>
+    </div>
+    <div id="modeIntro" class="mode-intro"></div>
+    <div id="exercise"></div>
+  </section>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="data-1.js"></script>
+<script src="data-2.js"></script>
+<script src="data-3.js"></script>
+<script src="data-4.js"></script>
+<script src="app.js"></script>
+<script src="boot.js"></script>
+</body>
+</html>
